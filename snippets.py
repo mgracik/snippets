@@ -60,6 +60,31 @@ def unique(seq, key=None):
             yield elem
 
 
+def groupjoin(s, sep, groupby):
+    return sep.join([''.join(x[::-1]) for x in itertools.izip_longest(*[iter(s[::-1])] * groupby, fillvalue='')][::-1])
+
+
+def mac(s):
+    '''
+    >>> mac('aabbccddeeff')
+    'aa:bb:cc:dd:ee:ff'
+    '''
+
+    return groupjoin(s, sep=':', groupby=2)
+
+
+def thousands(n, sep=','):
+    '''
+    >>> map(thousands, [100, -100, 1000, -1000, 1000000, -1000000])
+    ['100', '-100', '1,000', '-1,000', '1,000,000', '-1,000,000']
+    >>> thousands(1000000, sep='.')
+    '1.000.000'
+    '''
+
+    prefix, n = ('-', -n) if n < 0 else ('', n)
+    return prefix + groupjoin(str(n), sep, groupby=3)
+
+
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
