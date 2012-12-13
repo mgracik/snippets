@@ -43,6 +43,10 @@ class Bunch(dict):
         super(Bunch, self).__init__(*args, **kwds)
         self.__dict__ = self
 
+    def copy(self):
+        new_dict = super(Bunch, self).copy()
+        return Bunch(new_dict)
+
 
 if __name__ == '__main__':
     import doctest
