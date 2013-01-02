@@ -3,6 +3,10 @@ from inspect import getmembers, ismethod
 import warnings
 
 
+class FuzzyMatchWarning(UserWarning):
+    pass
+
+
 class FuzzyObject(object):
     '''
     >>> class FuzzyClass(FuzzyObject):
@@ -28,7 +32,7 @@ class FuzzyObject(object):
         names = self.__method_names | set(self.__dict__.keys())
         matches = difflib.get_close_matches(name, names, 1, 0.8)
         if matches:
-            warnings.warn('fuzzy matched %r' % matches[0], SyntaxWarning)
+            warnings.warn('fuzzy matched %r' % matches[0], FuzzyMatchWarning)
             return getattr(self, matches[0])
         else:
             raise AttributeError("'%s' object has no attribute '%s'" %
