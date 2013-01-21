@@ -38,17 +38,24 @@ class ConfigSection(object):
         items = ['(%r, %r)' % item for item in self.items()]
         return '%s([%s])' % (self.__class__.__name__, ', '.join(items))
 
-    def get(self, *args, **kwargs):
-        return self._config.get(self._section, *args, **kwargs)
+    def _get(self, getter, option, fallback):
+        if option not in self:
+            return fallback
+        else:
+            getter = getattr(configparser.ConfigParser, getter)
+            return getter(self._config, self._section, option)
 
-    def getint(self, *args, **kwargs):
-        return self._config.getint(self._section, *args, **kwargs)
+    def get(self, option, fallback=None):
+        return self._get('get', option, fallback)
 
-    def getfloat(self, *args, **kwargs):
-        return self._config.getfloat(self._section, *args, **kwargs)
+    def getint(self, option, fallback=None):
+        return self._get('getint', option, fallback)
 
-    def getboolean(self, *args, **kwargs):
-        return self._config.getboolean(self._section, *args, **kwargs)
+    def getfloat(self, option, fallback=None):
+        return self._get('getfloat', option, fallback)
+
+    def getboolean(self, option, fallback=None):
+        return self._get('getboolean', option, fallback)
 
     @property
     def name(self):
