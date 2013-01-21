@@ -94,6 +94,12 @@ class ConfigParser(configparser.SafeConfigParser):
     def optionxform(self, option):
         return option
 
+    def get(self, section, option, fallback=None):
+        try:
+            return configparser.ConfigParser.get(self, section, option)
+        except configparser.NoOptionError:
+            return fallback
+
 
 class SortedDict(dict):
 
