@@ -63,6 +63,68 @@ class ConfigSection(object):
 
 
 class ConfigParser(configparser.SafeConfigParser):
+    '''
+    >>> config = ConfigParser(dict_type=SortedDict)
+    >>> config['DEFAULT'] = {'ServerAliveInterval': '45',
+    ...                      'Compression': 'yes',
+    ...                      'CompressionLevel': '9'}
+    >>> config['bitbucket.org'] = {}
+    >>> config['bitbucket.org']['User'] = 'hg'
+    >>> config['topsecret.server.com'] = {}
+    >>> topsecret = config['topsecret.server.com']
+    >>> topsecret['Port'] = '50022'     # mutates the parser
+    >>> topsecret['ForwardX11'] = 'no'  # same here
+    >>> config['DEFAULT']['ForwardX11'] = 'yes'
+    >>> config.sections()
+    ['bitbucket.org', 'topsecret.server.com']
+    >>> 'bitbucket.org' in config
+    True
+    >>> 'bytebong.com' in config
+    False
+    >>> config['bitbucket.org']['User']
+    'hg'
+    >>> config['DEFAULT']['Compression']
+    'yes'
+    >>> topsecret = config['topsecret.server.com']
+    >>> topsecret['ForwardX11']
+    'no'
+    >>> topsecret['Port']
+    '50022'
+    >>> for key in config['bitbucket.org']: print(key)
+    ...
+    Compression
+    CompressionLevel
+    ForwardX11
+    ServerAliveInterval
+    User
+    >>> config['bitbucket.org']['ForwardX11']
+    'yes'
+    >>> topsecret.getboolean('ForwardX11')
+    False
+    >>> config['bitbucket.org'].getboolean('ForwardX11')
+    True
+    >>> config.getboolean('bitbucket.org', 'Compression')
+    True
+    >>> topsecret.get('Port')
+    '50022'
+    >>> topsecret.get('CompressionLevel')
+    '9'
+    >>> topsecret.get('Cipher')
+    >>> topsecret.get('Cipher', '3des-cbc')
+    '3des-cbc'
+    >>> topsecret.get('CompressionLevel', '3')
+    '9'
+    >>> config.get('bitbucket.org', 'monster',
+    ...            fallback='No such things as monsters')
+    'No such things as monsters'
+    >>> 'BatchMode' in topsecret
+    False
+    >>> topsecret.getboolean('BatchMode', fallback=True)
+    True
+    >>> config['DEFAULT']['BatchMode'] = 'no'
+    >>> topsecret.getboolean('BatchMode', fallback=True)
+    False
+    '''
 
     def __setitem__(self, section, options):
         if not section in self and section != 'DEFAULT':
@@ -130,3 +192,8 @@ class SortedDict(dict):
     def __str__(self):
         items = ['(%r, %r)' % item for item in self.items()]
         return '%s([%s])' % (self.__class__.__name__, ', '.join(items))
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
