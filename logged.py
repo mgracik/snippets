@@ -76,3 +76,22 @@ class Logged(object):
             post_cb = super(Logged, self).__getattribute__('_log_post_cb')
             attr = logfunction(attr, self, pre_cb, post_cb)
         return attr
+
+
+class Logger(object):
+
+    def __init__(self, name=None, level=logging.INFO, filename=None):
+        self._logger = logging.getLogger(name or __name__)
+        self._logger.setLevel(level)
+        frmt = logging.Formatter('%(levelname)s:%(name)s:%(message)s')
+        sh = logging.StreamHandler()
+        sh.setFormatter(frmt)
+        self._logger.addHandler(sh)
+        if filename:
+            fh = logging.FileHandler(filename, mode='w')
+            fh.setFormatter(frmt)
+            self._logger.addHandler(fh)
+            sh.setLevel(logging.ERROR)
+
+    def __getattr__(self, name):
+        return getattr(self._logger, name)
