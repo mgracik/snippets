@@ -1,5 +1,5 @@
 import logging
-logger = logging.getLogger('logger.%s' % __name__)
+logger = logging.getLogger(__name__)
 import os
 import shlex
 import subprocess
