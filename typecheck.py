@@ -7,7 +7,7 @@ def typechecked(f, *args, **kwargs):
 
     def check(arg, val):
         annotation = argspec.annotations.get(arg)
-        if annotation and type(val) != annotation:
+        if annotation and not isinstance(val, annotation):
             raise TypeError('%s has to be %s' % (arg, annotation))
 
     @wraps(f)
